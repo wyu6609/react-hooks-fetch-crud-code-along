@@ -1,8 +1,29 @@
 import React, { useState } from "react";
 
-function ItemForm() {
+function ItemForm({ onAddNewObj }) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Produce");
+
+  //submit button handler
+  const submitBtnHandler = (event) => {
+    event.preventDefault();
+    //create new Obj
+    const newObj = {
+      name: name,
+      category: category,
+      isInCart: false,
+    };
+    fetch("http://localhost:3000/items", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newObj),
+    })
+      .then((r) => r.json())
+      // call the onAddItem prop with the newItem
+      .then((newItem) => onAddNewObj(newItem));
+  };
 
   return (
     <form className="NewItem">
@@ -29,7 +50,9 @@ function ItemForm() {
         </select>
       </label>
 
-      <button type="submit">Add to List</button>
+      <button type="submit" onClick={submitBtnHandler}>
+        Add to List
+      </button>
     </form>
   );
 }
